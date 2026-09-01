@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for
 from datetime import datetime
 from database import save_bookings, save_clubs, save_competitions
 from finders import find_club_by_email, find_club_by_name, find_competition_by_name
-from validators import is_competition_past, compute_max_places
+from validators import is_competition_past, compute_max_places, validate_and_prepare_booking
 from operations import apply_booking
 from utils import get_now_str
 
@@ -57,15 +57,17 @@ def purchase_places():
         flash("Enter a valid number.")
         return render_template('booking.html', club=club, competition=competition)
 
-    max_allowed = compute_max_places(club, competition, bookings)
-    if places_required > max_allowed:
-        flash(f"You can only book up to {max_allowed} more places.")
+    is_valid, error_msg, max_allowed = validate_and_prepare_booking(
+        club, competition, places_required, bookings, datetime.now()
+    )
+
+    if not is_valid:
+        flash(error_msg)
         return render_template('booking.html', club=club, competition=competition, max_places=max_allowed)
 
     apply_booking(club, competition, places_required, bookings)
     flash('Great-booking complete!')
     return render_template('welcome.html', club=club, competitions=competitions, now=get_now_str())
-
 @main_bp.route('/logout')
 def logout():
     return redirect(url_for('main.index'))
