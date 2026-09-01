@@ -3,7 +3,7 @@
         {
             "name": "Spring Gala",
             "date": "2026-10-22 10:00:00",
-            "numberOfPlaces": 15
+            "numberOfPlaces": 6
         },
         {
             "name": "Fall Classic",
@@ -13,6 +13,11 @@
         {
             "name": "Kawazaki",
             "date": "2028-10-22 13:30:00",
+            "numberOfPlaces": 10
+        },
+        {
+            "name": "Obama",
+            "date": "2022-10-22 10:00:00",
             "numberOfPlaces": 15
         }
     ]

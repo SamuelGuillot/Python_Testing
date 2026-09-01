@@ -1,5 +1,9 @@
 {
     "Simply Lift": {
-        "Spring Gala": 10
+        "Spring Gala": 0,
+        "Kawazaki": 5
+    },
+    "Sam Admin": {
+        "Spring Gala": 9
     }
 }

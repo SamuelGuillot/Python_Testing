@@ -1,3 +1,4 @@
+# database.py
 import json
 import logging
 import os
@@ -7,6 +8,8 @@ CLUBS_FILE = os.environ.get('CLUBS_FILE', 'clubs.json')
 COMPETITIONS_FILE = os.environ.get('COMPETITIONS_FILE', 'competitions.json')
 
 logging.basicConfig(level=logging.ERROR)
+
+
 
 def load_json(file_path, key=None):
     try:

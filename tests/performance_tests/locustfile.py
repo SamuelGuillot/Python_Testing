@@ -1,3 +1,4 @@
+# tests/performance_tests/locustfile.py
 from locust import HttpUser, task, between
 
 class GUDLFTPerfTest(HttpUser):
@@ -6,7 +7,9 @@ class GUDLFTPerfTest(HttpUser):
     def on_start(self):
         self.email = "perfa@test.com"
         self.club_name = "Perf Club A"
-        self.client.post("/showSummary", data={"email": self.email})
+        response = self.client.post("/showSummary", data={"email": self.email})
+        if response.status_code != 200:
+            print(f"Erreur de connexion pour {self.email}")
 
     @task(1)
     def afficher_accueil(self):

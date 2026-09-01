@@ -3,7 +3,7 @@
         {
             "name": "Simply Lift",
             "email": "john@simplylift.co",
-            "points": 3
+            "points": 8
         },
         {
             "name": "Iron Temple",
@@ -14,6 +14,11 @@
             "name": "She Lifts",
             "email": "kate@shelifts.co.uk",
             "points": 12
+        },
+        {
+            "name": "Sam Admin",
+            "email": "sam@sam.com",
+            "points": 3
         }
     ]
 }

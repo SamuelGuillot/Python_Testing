@@ -13,7 +13,6 @@ def compute_max_places(club, competition, bookings_dict):
     max_places = min(places, points, 12 - already_booked)
     return max(max_places, 0)
 
-
 def validate_and_prepare_booking(club, competition, places_required, bookings, current_date):
     """Validate a booking request and return (is_valid, error_msg, max_allowed)."""
     if is_competition_past(competition, current_date):
@@ -38,7 +37,6 @@ def validate_and_prepare_booking(club, competition, places_required, bookings, c
             return False, f"Your club does not have enough points (you have {club_points}).", max_allowed
         if max_by_12_rule < places_required:
             return False, f"You can only book {max_by_12_rule} more place(s) due to the 12 place limit.", max_allowed
-        # fallback
         return False, f"You can only book up to {max_allowed} more places.", max_allowed
 
     return True, None, max_allowed

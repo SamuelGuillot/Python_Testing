@@ -5,8 +5,6 @@ import routes.main
 import tempfile
 import os
 import database
-
-import pytest
 from freezegun import freeze_time
 
 @pytest.fixture(autouse=True)
@@ -14,7 +12,7 @@ def freeze_time_for_tests():
     with freeze_time("2025-01-01"):
         yield
 
-        
+
 @pytest.fixture(autouse=True)
 def temp_files(monkeypatch):
     temp_dir = tempfile.mkdtemp()

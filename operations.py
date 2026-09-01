@@ -1,4 +1,5 @@
 def apply_booking(club, competition, places_required, bookings_dict):
+    """Apply a booking: update club points, competition places, and bookings."""
     club_name = club['name']
     comp_name = competition['name']
 
