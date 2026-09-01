@@ -36,6 +36,7 @@ def book(competition, club):
     if is_competition_past(found_competition, datetime.now()):
         flash("This competition has already taken place.")
         return render_template('welcome.html', club=found_club, competitions=competitions, now=get_now_str())
+
     max_allowed = compute_max_places(found_club, found_competition, bookings)
     return render_template('booking.html', club=found_club, competition=found_competition, max_places=max_allowed)
 
