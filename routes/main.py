@@ -2,7 +2,7 @@ from flask import Blueprint, render_template, request, flash, redirect, url_for
 from datetime import datetime
 from database import save_bookings, save_clubs, save_competitions
 from finders import find_club_by_email, find_club_by_name, find_competition_by_name
-from validators import is_competition_past
+from validators import is_competition_past, compute_max_places
 from operations import apply_booking
 from utils import get_now_str
 
@@ -36,8 +36,8 @@ def book(competition, club):
     if is_competition_past(found_competition, datetime.now()):
         flash("This competition has already taken place.")
         return render_template('welcome.html', club=found_club, competitions=competitions, now=get_now_str())
-
-    return render_template('booking.html', club=found_club, competition=found_competition)
+    max_allowed = compute_max_places(found_club, found_competition, bookings)
+    return render_template('booking.html', club=found_club, competition=found_competition, max_places=max_allowed)
 
 @main_bp.route('/purchasePlaces', methods=['POST'])
 def purchase_places():
@@ -56,6 +56,11 @@ def purchase_places():
     except ValueError:
         flash("Enter a valid number.")
         return render_template('booking.html', club=club, competition=competition)
+
+    max_allowed = compute_max_places(club, competition, bookings)
+    if places_required > max_allowed:
+        flash(f"You can only book up to {max_allowed} more places.")
+        return render_template('booking.html', club=club, competition=competition, max_places=max_allowed)
 
     apply_booking(club, competition, places_required, bookings)
     flash('Great-booking complete!')
