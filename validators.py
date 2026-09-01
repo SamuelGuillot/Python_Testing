@@ -7,8 +7,8 @@ def is_competition_past(competition, current_datetime):
 
 def compute_max_places(club, competition, bookings_dict):
     """Return the maximum places a club can still book for a competition."""
-    places = int(competition.get('numberOfPlaces', 0))
-    points = int(club.get('points', 0))
+    places = competition.get('numberOfPlaces', 0)
+    points = club.get('points', 0)
     already_booked = bookings_dict.get(club['name'], {}).get(competition['name'], 0)
     max_places = min(places, points, 12 - already_booked)
     return max(max_places, 0)

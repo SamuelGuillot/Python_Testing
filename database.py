@@ -1,32 +1,48 @@
 import json
+import logging
 
 BOOKINGS_FILE = 'bookings.json'
 CLUBS_FILE = 'clubs.json'
 COMPETITIONS_FILE = 'competitions.json'
 
+logging.basicConfig(level=logging.ERROR)
+
+def load_json(file_path, key=None):
+    try:
+        with open(file_path, 'r') as f:
+            data = json.load(f)
+        if key:
+            return data.get(key, [])
+        return data
+    except (FileNotFoundError, PermissionError, json.JSONDecodeError) as e:
+        logging.error(f"Erreur lecture {file_path}: {e}")
+        return [] if key else {}
+
+def save_json(file_path, data, key=None):
+    try:
+        payload = {key: data} if key else data
+        with open(file_path, 'w') as f:
+            json.dump(payload, f, indent=4)
+        return True
+    except PermissionError as e:
+        logging.error(f"Erreur écriture {file_path}: {e}")
+        return False
+
+
 def load_clubs():
-    with open(CLUBS_FILE) as c:
-        return json.load(c)['clubs']
+    return load_json(CLUBS_FILE, key='clubs')
 
 def save_clubs(clubs_list):
-    with open(CLUBS_FILE, 'w') as c:
-        json.dump({'clubs': clubs_list}, c, indent=4)
+    return save_json(CLUBS_FILE, clubs_list, key='clubs')
 
 def load_competitions():
-    with open(COMPETITIONS_FILE) as comps:
-        return json.load(comps)['competitions']
+    return load_json(COMPETITIONS_FILE, key='competitions')
 
 def save_competitions(competitions_list):
-    with open(COMPETITIONS_FILE, 'w') as comps:
-        json.dump({'competitions': competitions_list}, comps, indent=4)
+    return save_json(COMPETITIONS_FILE, competitions_list, key='competitions')
 
 def load_bookings():
-    try:
-        with open(BOOKINGS_FILE) as b:
-            return json.load(b)
-    except FileNotFoundError:
-        return {}
+    return load_json(BOOKINGS_FILE)
 
 def save_bookings(bookings_dict):
-    with open(BOOKINGS_FILE, 'w') as b:
-        json.dump(bookings_dict, b, indent=4)
+    return save_json(BOOKINGS_FILE, bookings_dict)
