@@ -1,9 +1,10 @@
 import json
 import logging
+import os
 
-BOOKINGS_FILE = 'bookings.json'
-CLUBS_FILE = 'clubs.json'
-COMPETITIONS_FILE = 'competitions.json'
+BOOKINGS_FILE = os.environ.get('BOOKINGS_FILE', 'bookings.json')
+CLUBS_FILE = os.environ.get('CLUBS_FILE', 'clubs.json')
+COMPETITIONS_FILE = os.environ.get('COMPETITIONS_FILE', 'competitions.json')
 
 logging.basicConfig(level=logging.ERROR)
 
@@ -11,9 +12,7 @@ def load_json(file_path, key=None):
     try:
         with open(file_path, 'r') as f:
             data = json.load(f)
-        if key:
-            return data.get(key, [])
-        return data
+        return data.get(key, []) if key else data
     except (FileNotFoundError, PermissionError, json.JSONDecodeError) as e:
         logging.error(f"Erreur lecture {file_path}: {e}")
         return [] if key else {}
@@ -28,7 +27,6 @@ def save_json(file_path, data, key=None):
         logging.error(f"Erreur écriture {file_path}: {e}")
         return False
 
-
 def load_clubs():
     return load_json(CLUBS_FILE, key='clubs')
 
@@ -42,7 +40,7 @@ def save_competitions(competitions_list):
     return save_json(COMPETITIONS_FILE, competitions_list, key='competitions')
 
 def load_bookings():
-    return load_json(BOOKINGS_FILE)
+    return load_json(BOOKINGS_FILE)   # flat dict
 
 def save_bookings(bookings_dict):
     return save_json(BOOKINGS_FILE, bookings_dict)
