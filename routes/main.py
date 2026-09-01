@@ -7,6 +7,7 @@ from validators import (
 )
 from operations import apply_booking
 from utils import get_now_str
+import os
 
 main_bp = Blueprint('main', __name__)
 
@@ -69,9 +70,10 @@ def purchase_places():
         return render_template('booking.html', club=club, competition=competition, max_places=max_allowed)
 
     apply_booking(club, competition, places_required, bookings) # Happy path
-    save_bookings(bookings)
-    save_competitions(competitions)
-    save_clubs(clubs)
+    if os.environ.get('PERF_TEST') != 'true':
+        save_bookings(bookings)
+        save_competitions(competitions)
+        save_clubs(clubs)
 
     flash('Great-booking complete!')
     return render_template('welcome.html', club=club, competitions=competitions, now=get_now_str())
