@@ -1,7 +1,10 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for
+from datetime import datetime
 from database import save_bookings, save_clubs, save_competitions
 from finders import find_club_by_email, find_club_by_name, find_competition_by_name
+from validators import is_competition_past
 from operations import apply_booking
+from utils import get_now_str
 
 main_bp = Blueprint('main', __name__)
 
@@ -16,27 +19,47 @@ def index():
 @main_bp.route('/showSummary', methods=['POST'])
 def show_summary():
     club = find_club_by_email(request.form['email'], clubs)
-    return render_template('welcome.html', club=club, competitions=competitions)
+    if not club:
+        return render_template('index.html', error="Email not found. Please try again.")
+    return render_template('welcome.html', club=club, competitions=competitions, now=get_now_str())
 
 @main_bp.route('/book/<competition>/<club>')
 def book(competition, club):
     found_club = find_club_by_name(club, clubs)
     found_competition = find_competition_by_name(competition, competitions)
-    if found_club and found_competition:
-        return render_template('booking.html', club=found_club, competition=found_competition)
-    else:
-        flash("Something went wrong-please try again")
-        return render_template('welcome.html', club=found_club, competitions=competitions)
+
+    if not found_club:
+        return render_template('index.html', error="Club not found. Please try again."), 404
+    if not found_competition:
+        return render_template('index.html', error="Competition missing. Please try again."), 404
+
+    if is_competition_past(found_competition, datetime.now()):
+        flash("This competition has already taken place.")
+        return render_template('welcome.html', club=found_club, competitions=competitions, now=get_now_str())
+
+    return render_template('booking.html', club=found_club, competition=found_competition)
 
 @main_bp.route('/purchasePlaces', methods=['POST'])
 def purchase_places():
-    competition = find_competition_by_name(request.form['competition'], competitions)
     club = find_club_by_name(request.form['club'], clubs)
-    places_required = int(request.form['places'])
+    competition = find_competition_by_name(request.form['competition'], competitions)
+
+    if not club or not competition:
+        return render_template('index.html', error="Invalid data."), 404
+
+    if is_competition_past(competition, datetime.now()):
+        flash("Cannot purchase places for a past competition.")
+        return render_template('welcome.html', club=club, competitions=competitions, now=get_now_str())
+
+    try:
+        places_required = int(request.form['places'])
+    except ValueError:
+        flash("Enter a valid number.")
+        return render_template('booking.html', club=club, competition=competition)
+
     apply_booking(club, competition, places_required, bookings)
-    save_competitions(competitions)
     flash('Great-booking complete!')
-    return render_template('welcome.html', club=club, competitions=competitions)
+    return render_template('welcome.html', club=club, competitions=competitions, now=get_now_str())
 
 @main_bp.route('/logout')
 def logout():
