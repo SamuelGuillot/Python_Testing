@@ -72,3 +72,8 @@ def purchase_places():
 @main_bp.route('/logout')
 def logout():
     return redirect(url_for('main.index'))
+
+@main_bp.route('/points')
+def points_display():
+    sorted_clubs = sorted(clubs, key=lambda c: c['points'], reverse=True)
+    return render_template('points.html', clubs=sorted_clubs)

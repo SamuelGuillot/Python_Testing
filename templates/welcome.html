@@ -20,6 +20,7 @@
 
     <h2>Welcome, {{ club['email'] }} </h2>
     <a href="{{ url_for('main.logout') }}">Logout</a>
+    <a href="{{ url_for('main.points_display') }}">Points Board</a>
 
 
     Points available: {{ club['points'] }}
